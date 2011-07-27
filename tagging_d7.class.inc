@@ -37,7 +37,7 @@ class tagging_d7 extends tagging_d6 {
   }
 
   public function theme_tagging_tags_list($args) {
-    return parent::theme_tagging_tags_list($args['content'], $args['vid']);
+    return parent::theme_tagging_tags_list($args['tags'], $args['vid']);
   }
 
   public function theme_tagging_suggestions_list($args) {

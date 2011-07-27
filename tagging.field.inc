@@ -43,11 +43,13 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
     else {
       $description = t('Type and press enter to add the tag');
     }
-
+    
     $tags = array();
     foreach ($items as $item) {
-      $tags[$item['tid']] = isset($item['taxonomy_term']) ? $item['taxonomy_term'] : taxonomy_term_load($item['tid']);
+      $term = isset($item['taxonomy_term']) ? $item['taxonomy_term'] : taxonomy_term_load($item['tid']);
+      $tags[] = $term->name;
     }
+    sort($tags);
 
     // order (temporary comments)
     // Active Tags: term1(x), term2(x), etc
@@ -87,14 +89,8 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
     $element['input_field']['button'] = array(
       '#markup' => theme('tagging_widget_button', array('element' => $element, 'vid' => $vid->vid)),
     );
-    // add suggestions here
-    $element['suggestions']['#value'] = _tagging_add_suggestions( array(
-        'nid' => $form['nid']['#value'],
-	      'vid' => $vid->vid,
-      )
-    );
 
-    $element['suggestions']['#markup'] = theme('tagging_suggestions_list', array('suggestions' => $element['suggestions']['#value'], 'vid' => $vid->vid));
+    $element['suggestions']['#markup'] = theme('tagging_suggestions_list', array('suggestions' => _tagging_get_suggestions($vid->vid, $form['nid']['#value']), 'vid' => $vid->vid));
 
     // Stores terms
     $element['input_field']['terms'] = array(
