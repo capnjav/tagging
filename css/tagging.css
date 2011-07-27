@@ -1,12 +1,13 @@
-/* $Id: tagging.css,v 1.12.2.5 2010/10/17 10:23:24 eugenmayer Exp $
+/**
  * Author: Eugen Mayer (http://kontextwork.de)
- * Copyright 2010
+ * Drupal 6 to Drupal 7 conversion by iStryker
+ * Copyright 2011
  */
 
 .tagging-tag {
   margin:5px 3px 5px 3px;
   cursor:pointer;
-  background: url('remove.png') white no-repeat right center;
+  background: url('../images/remove.png') white no-repeat right center;
   padding:3px 19px 3px 3px;
   border:1px solid grey;
   -moz-border-radius:4px;
@@ -15,7 +16,7 @@
 }
 
 .tagging-suggest-tag {
-  background: url('add.png') white no-repeat right;
+  background: url('../images/add.png') white no-repeat right;
   background-color: #c3f47f;
   margin:5px 5px 5px 5px;
   padding:3px 18px 3px 3px;
@@ -51,7 +52,7 @@
   margin:3px 0px 0px 5px;
   width:19px;
   height:19px;
-  background:url('add.png') transparent no-repeat center center;
+  background:url('../images/add.png') transparent no-repeat center center;
 }
 
 .tagging-curtags-wrapper {
@@ -63,7 +64,7 @@
 .tagging-curtags-wrapper label {
   padding:0px 0px 4px 20px;
   margin-left:5px;
-  background:url('tag.png') transparent no-repeat left center;
+  background:url('../images/tag.png') transparent no-repeat left center;
   display:block;
 }
 

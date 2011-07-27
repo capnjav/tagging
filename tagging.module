@@ -4,22 +4,13 @@
 // Author: Eugen Mayer (http://kontextwork.de)
 // Copyright 2010
 
+//require_once('tagging.field.inc');
+require_once('tagging_base.class.inc');
 /**
  * hook_menu
  */
 function tagging_menu() {
-  $items = array();
-  $items['admin/settings/tagging/settings'] = array (
-        'type' => MENU_NORMAL_ITEM,
-        'title' => 'Tagging configuration',
-        'description' => 'Configuration options for the tagging module',
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('tagging_admin_settings'),
-        'access arguments' => array('administer site configuration'),
-        'file' => 'tagging.admin.inc'
-   );
-
-  return $items;
+  return tagging_base::instance()->hook_menu();
 }
 
 /**
@@ -93,88 +84,39 @@ function tagging_form_taxonomy_form_vocabulary_alter(&$form, $form_state ) {
  * Implementing hook_theme.
  */
 function tagging_theme() {
-  return array(
-    'tagging_widget' => array('arguments' => array('element' => NULL) ),
-    'tagging_widget_button' => array('arguments' => array('vid' => NULL) ),
-    'tagging_widget_wrapper' => array('arguments' => array('content' => NULL, 'vid' => NULL) ),
-    'tagging_suggestions_list' => array('arguments' => array('suggestions' => array(), 'vid' => NULL )),
-    'tagging_tags_list' => array('arguments' => array('tags' => array(), 'vid' => NULL) )
-  );
+  return tagging_base::instance()->hook_theme();
 }
 
 /**
  * Rendering the tagging widget.
  */
 function theme_tagging_widget($element) {
-  // TODO: Maybe use a file as a template..but otherwise...performance?
-  $vid = $element['#vid'];
-  $cur_tags = '';
-
-  $id = "tagging-widget-input-$vid";
-  $fieldset['#title'] = $element['#title'];
-  $fieldset['#collapsed'] = false;
-  // Well this is the original. We actually just need it in the background, so that we
-  // dont need to fight in the validation filter. We can let the normal taxonomy.modul
-  // validators and submitters do their job.
-  $element['#type'] = 'hidden';
-  $element['#attributes']['class'] = "tagging-widget-target-$vid";
-  $old_input = theme('hidden', $element);
-
-  // Ok now lets render the input textfield we will use for the tagging
-  $element['#type'] = 'textfield';
-  // Its convention that the tagging-widget-VID class it addid. That vid will be used
-  // to get the unique "context" id for all the other wrappers and functions.
-  $element['#attributes']['class'] = "tagging-widget-input $id";
-  $element['#id']= $id;
-  $element['#title']= ""; 
-  
-  if($element['#description'] == '') {
-    $element['#description'] = t("Type and press enter to add the tag");
-  }  
-  $element['#field_suffix'] = theme('tagging_widget_button', $vid).$old_input;
-  $output .= theme('tagging_tags_list',split(',',$element['#value']),$vid)
-            .'<div class="taggin-widget-input-wrapper clearfix">'
-            .theme('textfield', $element)
-            .'</div>'
-            .theme('tagging_suggestions_list', $element['#suggestions'], $vid);
-  $fieldset['#value'] = $output;
-  $output = theme('fieldset',$fieldset);
-  return theme('tagging_widget_wrapper',$output,$vid);
+  $args = func_get_args();
+  return call_user_method_array('theme_tagging_widget', tagging_base::instance(), $args);
 }
 
 /**
  * Rendering the widget button
  */
-function theme_tagging_widget_button($vid) {
-  return '<a class="tagging-button-container" href="#" title="'.t('Add').'"><span class="tagging-button tagging-button-'.$vid.'"></span></a>';
+function theme_tagging_widget_button() {
+  $args = func_get_args();
+  return call_user_method_array('theme_tagging_widget_button', tagging_base::instance(), $args);
 }
 
 /**
  * Rendering the wrapper of the widget
  */
-function theme_tagging_widget_wrapper($content, $vid) {
-   return "<div id='tagging-widget-container'>$content</div>";
+function theme_tagging_widget_wrapper() {
+  $args = func_get_args();
+  return call_user_method_array('theme_tagging_widget_wrapper', tagging_base::instance(), $args);
 }
-
 
 /**
  * Rendering suggestions for a specific vocabulary
  */
-function theme_tagging_tags_list($tags, $vid) {
-  $cur_tags = '';
-  // they are sorted already
-  foreach ($tags as $term) {
-    if($term == '') {
-      continue;
-    }
-    // TODO: use # here...but out of any reason it gets encoded to %23 in html
-    // using trim here, as mostly the old tagging system was "one, two, three"..
-    $term = "<span class='tagging-tag'>"._tagging_check_tag($term)."</span>";
-    
-    $link = l($term, '', array('html' => true, 'attributes' => array('title' => t('Remove tag'), 'fragment' => '#')));
-    $cur_tags .= $link;
-  }
-  return "<div class='tagging-curtags-wrapper tagging-curtags-wrapper-$vid'><label>".t('Assigned Tags:')."</label>$cur_tags</div>";
+function theme_tagging_tags_list($variables) {
+  $args = func_get_args();
+  return call_user_method_array('theme_tagging_tags_list', tagging_base::instance(), $args);
 }
 
 function _tagging_check_tag($tag) {
@@ -186,31 +128,9 @@ function _tagging_check_tag($tag) {
  * Rendering suggestions
  * we need $vid for namespacing only
  */
-function theme_tagging_suggestions_list($suggestions, $vid) {
-    $suggested_tags = '';
-    // They are sorted already.
-    foreach ($suggestions as $term) {
-      if($term['#name'] == '') {
-        continue;
-      }
-      // TODO: Use # here...but out of any reason it gets encoded to %23 in html.
-      $title = t('Add this already existing tag');
-      $class = 'tagging-suggest-tag';
-      if(array_key_exists('#new',$term) && $term['#new'] == TRUE) {
-	$class .= ' tagging-suggestion-new';
-        $title = t('Add this new tag');
-      }
-      $term = "<span id='tagging-$vid' class='{$class}'>"._tagging_check_tag($term['#name'])."</span>";
-      $link = l($term, '', array('html' => true, 'attributes' => array('title' =>$title )));
-      $suggested_tags .= $link;
-    }
-    // If we have any suggestions, then place the wrapper.
-    if($suggested_tags != '') {
-      return "<div class='tagging-suggestions-wrapper tagging-suggestions-wrapper-$vid'><label>"
-                                . t('Suggestions') . ":</label>$suggested_tags</div>";
-    }
-    // We have no suggestions, so no need to show any output
-    return '';
+function theme_tagging_suggestions_list($variables) {
+  $args = func_get_args();
+  return call_user_method_array('theme_tagging_suggestions_list', tagging_base::instance(), $args);
 }
 
 /**
@@ -252,9 +172,9 @@ function _tagging_add_suggestions($element) {
  * Adding Javascript-Libraries needed, if a widget has been placed.
  */
 function _tagging_widget_javascript($form_element, &$form_state) {
-  drupal_add_css(drupal_get_path('module', 'tagging') .'/tagging.css', 'module');
-  drupal_add_js(drupal_get_path('module', 'tagging') .'/tagging.plugin.js', 'module');
-  drupal_add_js(drupal_get_path('module', 'tagging') .'/tagging.init.js', 'module');
+  drupal_add_css(drupal_get_path('module', 'tagging') .'/css/tagging.css', 'module');
+  drupal_add_js(drupal_get_path('module', 'tagging') .'/js/tagging.plugin.js', 'module');
+  drupal_add_js(drupal_get_path('module', 'tagging') .'/js/tagging.init.js', 'module');
   return $form_element;
 }
 
