@@ -1,5 +1,6 @@
 <?php
-
+// Drupal 7 field implementation by iStryker
+// Author: iStryker
 
 /**
  * Implements hook_field_widget_info().
