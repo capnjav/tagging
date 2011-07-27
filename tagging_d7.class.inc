@@ -48,28 +48,14 @@ class tagging_d7 extends tagging_d6 {
     return parent::theme_tagging_suggestions_list($args['suggestions'], $args['vid']);
   }
 
-  /**
-   * call $this->theme('my_theme_name', $arg1, $arg2) [Drupal 6 Style] and the funciton will construct a proper argument array for the Drupal 7 theme function as if you would call theme('my_theme_name', array('arg1' => $arg1, 'arg2' => $arg2))
-   * @return <type>
-   */
   public function theme() {
     $args = func_get_args();
     return call_user_func_array('theme', $args);
-    /*
-    $args = func_get_args();
-    $theme_name = array_shift($args);
-    $theme = $this->hook_theme();
-    if (isset($theme[$theme_name])) {
-      $theme_arg_array = $theme[$theme_name]['variables'];
-      foreach ($theme_arg_array as $key => $value) {
-        if (!empty($args)) {
-          $theme_arg_array[$key] = array_shift($args);
-        } else {
-          break;
-        }
-      }
-      return theme($theme_name, $theme_arg_array);
-    }*/
   }
 
+  public function  _tagging_widget_javascript($form_element = null, &$form_state = array()) {
+    $form_element = parent::_tagging_widget_javascript($form_element, $form_state);
+    drupal_add_js('jQuery(document).ready(function () {Drupal.behaviors.tagging_d7 = Drupal.behaviors.tagging_d6();});', array('type' => 'inline', 'scope' => 'footer'));
+    return $form_element;
+  }
 }

@@ -13,5 +13,4 @@
     obj.attach();
     return obj;
   };
-  Drupal.behaviors.tagging_d7 = Drupal.behaviors.tagging_d6();
 })(jQuery);

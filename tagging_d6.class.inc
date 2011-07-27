@@ -190,4 +190,11 @@ class tagging_d6 extends tagging_base {
     return call_user_func_array('theme', $args);
   }
 
+  public function _tagging_widget_javascript($form_element = null, &$form_state = array()) {
+    drupal_add_css(drupal_get_path('module', 'tagging') . '/css/tagging.css');
+    drupal_add_js(drupal_get_path('module', 'tagging') . '/js/tagging.plugin.js');
+    drupal_add_js(drupal_get_path('module', 'tagging') . '/js/tagging.init.js');
+    return $form_element;
+  }
+
 }
