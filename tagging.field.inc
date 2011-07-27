@@ -37,12 +37,6 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
   //I don't know if I need to foreach here, but it doesn't break anything.  Could allow multiple vocabularys in the future
   //Pulled from Example #1 of http://api.drupal.org/api/drupal/includes--database--database.inc/function/db_query/7
   foreach ($vids as $vid) {
-    if (!empty($instance['description'] )) {
-      $description = t($instance['description']);
-    }
-    else {
-      $description = t('Type and press enter to add the tag');
-    }
     
     $tags = array();
     foreach ($items as $item) {
@@ -68,7 +62,6 @@ function tagging_field_widget_form(&$form, &$form_state, $field, $instance, $lan
           'clearfix',
         )
       ),
-      '#description' => $description,
     );
 
     $element['input_field']['textfield'] = array(

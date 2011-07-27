@@ -41,10 +41,17 @@
   clear:both;
 }
 
-#tagging-widget-container .tagging-widget-input {
+div.tagging-curtags-wrapper ~ div.form-item, div.tagging-curtags-wrapper ~ div.form-item > div.form-item {
+  margin: 0px;
+  padding: 0px;
+}
+
+#tagging-widget-container .tagging-widget-input, input.tagging-widget-input {
   width:150px;
   float:left;
   margin:3px 0px 3px 0px;
+  padding: 0px;
+  height: 16px;
 }
 
 .tagging-button {
@@ -61,7 +68,7 @@
   display:inline-block;
   width:100%;
 }
-.tagging-curtags-wrapper label {
+div.tagging-curtags-wrapper label {
   padding:0px 0px 4px 20px;
   margin-left:5px;
   background:url('../images/tag.png') transparent no-repeat left center;
@@ -87,8 +94,12 @@
   float:left;
 }
 
-.taggin-widget-input-wrapper #autocomplete {
+.tagging-widget-input-wrapper #autocomplete {
   background-color:white;
+}
+
+div.tagging-widget-input-wrapper div.description {
+  padding: 6px 0px 0px 0px;
 }
 
 .clearfix:after {

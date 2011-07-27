@@ -100,7 +100,7 @@ class tagging_d6 extends tagging_base {
     }
     $element['#field_suffix'] = theme('tagging_widget_button', $vid) . $old_input;
     $output .= $this->theme('tagging_tags_list', array('tags' => split(',', $element['#value']), 'vid' => $vid))
-            . '<div class="taggin-widget-input-wrapper clearfix">'
+            . '<div class="tagging-widget-input-wrapper clearfix">'
             . $this->theme('textfield', array('element' => $element))
             . '</div>'
             . $this->theme('tagging_suggestions_list', array('suggestions' => $element['#suggestions'], 'vid' => $vid));
