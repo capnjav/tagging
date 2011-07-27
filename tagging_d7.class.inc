@@ -24,6 +24,10 @@ class tagging_d7 extends tagging_d6 {
     return tagging_d7::$theme;
   }
 
+  public function hook_tagging_form_alter(&$form, $form_state, $form_id) {}
+  
+  public function hook_tagging_form_taxonomy_form_vocabulary_alter(&$form, $form_state) {}
+
   public function theme_tagging_widget($args) {
     return parent::theme_tagging_widget_button($args['element']);
   }

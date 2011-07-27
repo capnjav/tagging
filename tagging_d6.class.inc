@@ -28,6 +28,51 @@ class tagging_d6 extends tagging_base {
     return $theme;
   }
 
+  public function hook_tagging_form_taxonomy_form_vocabulary_alter(&$form, $form_state) {
+    $form['settings']['tagging_inject'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Tagging Widget'),
+        '#weight' => 10,
+        '#default_value' => variable_get('tagging_inject_' . $form['vid']['#value'], 0),
+        '#description' => t('Use the visual tagging-widget, when this taxonomy is shown to the user'),
+    );
+    $form['#submit'][] = 'tagging_form_vocabulary_submit';
+  }
+
+  public function hook_tagging_form_alter(&$form, $form_state, $form_id) {
+// Check if we are editting a node and we actually have a tag taxonomy.
+    if ($form['#id'] == 'node-form' && isset($form['taxonomy']['tags'])) {
+      foreach ($form['taxonomy']['tags'] as $id => $values) {
+        if (variable_get('tagging_inject_' . $id, 0) == 1) {
+          $form['taxonomy']['tags'][$id]['#type'] = 'tagging_widget';
+          $form['taxonomy']['tags'][$id]['#vid'] = $id;
+          $form['taxonomy']['tags'][$id]['#nid'] = $form['nid']['#value'];
+        }
+      }
+    }
+
+// Check if user_terms is present
+    if (isset($form['user_terms'])) {
+// Iterate all the available vocabularies
+      foreach ($form['user_terms'] as $key => $value) {
+// Only act on form items containing vocabularies
+        if (strstr($key, 'user_terms_')) {
+// Extract the vid
+          $id = str_replace('user_terms_', '', $key);
+// Make sure it's numeric
+          if (is_numeric($id)) {
+// Check if the tagging widget is enabled for this
+            if (variable_get('tagging_inject_' . $id, 0)) {
+              $form['user_terms'][$key]['#type'] = 'tagging_widget';
+              $form['user_terms'][$key]['#vid'] = $id;
+              $form['user_terms'][$key]['#uid'] = $form['#uid'];
+            }
+          }
+        }
+      }
+    }
+  }
+
   public function theme_tagging_widget($element = null) {
     $vid = $element['#vid'];
     $cur_tags = '';
@@ -35,17 +80,17 @@ class tagging_d6 extends tagging_base {
     $id = "tagging-widget-input-$vid";
     $fieldset['#title'] = $element['#title'];
     $fieldset['#collapsed'] = false;
-    // Well this is the original. We actually just need it in the background, so that we
-    // dont need to fight in the validation filter. We can let the normal taxonomy.modul
-    // validators and submitters do their job.
+// Well this is the original. We actually just need it in the background, so that we
+// dont need to fight in the validation filter. We can let the normal taxonomy.modul
+// validators and submitters do their job.
     $element['#type'] = 'hidden';
     $element['#attributes']['class'] = "tagging-widget-target-$vid";
     $old_input = $this->theme('hidden', array('element' => $element));
 
-    // Ok now lets render the input textfield we will use for the tagging
+// Ok now lets render the input textfield we will use for the tagging
     $element['#type'] = 'textfield';
-    // Its convention that the tagging-widget-VID class it addid. That vid will be used
-    // to get the unique "context" id for all the other wrappers and functions.
+// Its convention that the tagging-widget-VID class it addid. That vid will be used
+// to get the unique "context" id for all the other wrappers and functions.
     $element['#attributes']['class'] = "tagging-widget-input $id";
     $element['#id'] = $id;
     $element['#title'] = "";
@@ -74,13 +119,13 @@ class tagging_d6 extends tagging_base {
 
   public function theme_tagging_tags_list($tags = array(), $vid = NULL) {
     $cur_tags = '';
-    // they are sorted already
+// they are sorted already
     foreach ($tags as $term) {
       if ($term == '') {
         continue;
       }
-      // TODO: use # here...but out of any reason it gets encoded to %23 in html
-      // using trim here, as mostly the old tagging system was "one, two, three"..
+// TODO: use # here...but out of any reason it gets encoded to %23 in html
+// using trim here, as mostly the old tagging system was "one, two, three"..
       $term = "<span class='tagging-tag'>" . _tagging_check_tag($term) . "</span>";
 
       $link = l($term, '', array('html' => true, 'attributes' => array('title' => t('Remove tag'), 'fragment' => '#')));
@@ -103,20 +148,20 @@ class tagging_d6 extends tagging_base {
       $cur_tags .= $link;
       }
       return "<div class='tagging-curtags-wrapper tagging-curtags-wrapper-" . $vid . "'><label>" . t('Assigned Tags:') . "</label>$cur_tags</div>";
-     * 
+     *
      */
   }
 
   public function theme_tagging_suggestions_list($suggestions = array(), $vid = NULL) {
     $suggested_tags = '';
-    // They are sorted already.
+// They are sorted already.
     $addNew = t('Add this new tag');
     $addExisting = t('Add this already existing tag');
     foreach ($suggestions as $term) {
       if ($term['#name'] == '') {
         continue;
       }
-      // TODO: Use # here...but out of any reason it gets encoded to %23 in html.
+// TODO: Use # here...but out of any reason it gets encoded to %23 in html.
       $title = $addExisting;
       $class = 'tagging-suggest-tag';
       if (array_key_exists('#new', $term) && $term['#new'] == TRUE) {
@@ -127,14 +172,15 @@ class tagging_d6 extends tagging_base {
       $link = l($term, '', array('html' => true, 'attributes' => array('title' => $title)));
       $suggested_tags .= $link;
     }
-    // If we have any suggestions, then place the wrapper.
+// If we have any suggestions, then place the wrapper.
     if ($suggested_tags != '') {
       return "<div class='tagging-suggestions-wrapper tagging-suggestions-wrapper-$vid'><label>"
       . t('Suggestions') . ":</label>$suggested_tags</div>";
     }
-    // We have no suggestions, so no need to show any output
+// We have no suggestions, so no need to show any output
     return '';
   }
+
   /**
    * For compatibility with drupal 7, all calls to the theme-function within this class should be made through this method, using drupal 7 theme funciton call style.
    * Important: put the keys in the right order, so the call can be properly converted into a drupa6-theme-funciton call.
@@ -143,4 +189,5 @@ class tagging_d6 extends tagging_base {
     $args = array_merge(array($theme_name), array_values($arr));
     return call_user_func_array('theme', $args);
   }
+
 }
