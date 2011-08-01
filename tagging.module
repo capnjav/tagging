@@ -56,7 +56,7 @@ function tagging_theme() {
  */
 function theme_tagging_widget($element) {
   $args = func_get_args();
-  return call_user_method_array('theme_tagging_widget', tagging_base::instance(), $args);
+  return call_user_func_array(array(tagging_base::instance(), 'theme_tagging_widget'), $args);
 }
 
 /**
@@ -64,7 +64,7 @@ function theme_tagging_widget($element) {
  */
 function theme_tagging_widget_button() {
   $args = func_get_args();
-  return call_user_method_array('theme_tagging_widget_button', tagging_base::instance(), $args);
+  return call_user_func_array(array(tagging_base::instance(), 'theme_tagging_widget_button'), $args);
 }
 
 /**
@@ -72,7 +72,7 @@ function theme_tagging_widget_button() {
  */
 function theme_tagging_widget_wrapper() {
   $args = func_get_args();
-  return call_user_method_array('theme_tagging_widget_wrapper', tagging_base::instance(), $args);
+  return call_user_func_array(array(tagging_base::instance(), 'theme_tagging_widget_wrapper'), $args);
 }
 
 /**
@@ -80,7 +80,7 @@ function theme_tagging_widget_wrapper() {
  */
 function theme_tagging_tags_list($variables) {
   $args = func_get_args();
-  return call_user_method_array('theme_tagging_tags_list', tagging_base::instance(), $args);
+  return call_user_func_array(array(tagging_base::instance(), 'theme_tagging_tags_list'), $args);
 }
 
 function _tagging_check_tag($tag) {
@@ -94,7 +94,7 @@ function _tagging_check_tag($tag) {
  */
 function theme_tagging_suggestions_list($variables) {
   $args = func_get_args();
-  return call_user_method_array('theme_tagging_suggestions_list', tagging_base::instance(), $args);
+  return call_user_func_array(array(tagging_base::instance(), 'theme_tagging_suggestions_list'), $args);
 }
 
 /**

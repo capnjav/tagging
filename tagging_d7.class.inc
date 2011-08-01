@@ -5,7 +5,7 @@ class tagging_d7 extends tagging_d6 {
   private static $theme = null;
 
   public function hook_menu() {
-    $items = parent::menu();
+    $items = parent::hook_menu();
     $items['admin/config/content/tagging'] = $items['admin/settings/tagging/settings'];
     unset($items['admin/settings/tagging/settings']);
     return $items;
@@ -13,7 +13,7 @@ class tagging_d7 extends tagging_d6 {
 
   public function hook_theme() {
     if (!tagging_d7::$theme) {
-      $theme = parent::theme();
+      $theme = parent::hook_theme();
       foreach ($theme as $key => $arr) {
         $arr['variables'] = $arr['arguments'];
         unset($arr['arguments']);

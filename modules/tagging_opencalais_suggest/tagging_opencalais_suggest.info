@@ -1,4 +1,3 @@
-; $Id: tagging_opencalais_suggest.info,v 1.1.2.5 2010/10/17 10:23:24 eugenmayer Exp $
 name = Tagging opencalais suggestions
 description = This tagging module exposes suggestions based on the current content (body) using the semantic opencalais service
 package = "Taxonomy"
