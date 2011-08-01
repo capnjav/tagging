@@ -1,13 +1,17 @@
 <?php
-
-// $Id$
 // Author: Eugen Mayer (http://kontextwork.de)
 // Copyright 2010
 
 function tagging_opencalais_suggest_tagging_suggestions($vid, $node) {
   $suggestions = array();
   if (is_array($node->body)) {
-    $text = implode(' ', array_values($node->body));
+    $body = $node->body;
+    $text = '';
+    foreach ($body as $lang) {
+      foreach ($lang as $item) {
+        $text .= $item['value'] . ' ';
+      }
+    }
   } else {
     $text = $node->body;
   }

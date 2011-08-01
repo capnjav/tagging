@@ -1,5 +1,4 @@
 <?php
-// $Id: tagging.admin.inc,v 1.5.2.4 2010/10/17 10:23:24 eugenmayer Exp $
 
 // Author: Eugen Mayer (http://kontextwork.de)
 // Copyright 2010
