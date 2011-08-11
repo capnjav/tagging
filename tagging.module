@@ -14,7 +14,7 @@ function tagging_menu() {
 }
 
 /**
- * Implementing hook_elements
+ * Implements hook_elements()
  * Registering the new form element, so we can render the tagging form element properly
  */
 function tagging_elements() {
@@ -28,7 +28,7 @@ function tagging_elements() {
 }
 
 /**
- * Implementation of hook_form_alter.
+ * Implements hook_form_alter().
  *
  */
 function tagging_form_alter(&$form, $form_state, $form_id) {
@@ -36,7 +36,7 @@ function tagging_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
- * Implementation of hook_form_ID_alter.
+ * Implements hook_form_ID_alter().
  *
  */
 function tagging_form_taxonomy_form_vocabulary_alter(&$form, $form_state) {
@@ -44,7 +44,7 @@ function tagging_form_taxonomy_form_vocabulary_alter(&$form, $form_state) {
 }
 
 /**
- * Implementing hook_theme.
+ * Implements hook_theme().
  */
 function tagging_theme() {
   return tagging_base::instance()->hook_theme();
@@ -113,8 +113,8 @@ function _tagging_add_suggestions($element) {
  * @param stdClass $node: This is the complete expanded node object. Use this to e.g. base your suggestions on the body
  *        of the node or the title or whatever you wish on
  */
-function _tagging_get_suggestions($vid, $node = null) {
-  if(is_numeric($node)) {
+function _tagging_get_suggestions($vid, $node = NULL) {
+  if (is_numeric($node)) {
     $node = node_load($node);
   }
   $suggestions = module_invoke_all('tagging_suggestions', $vid, $node);
@@ -134,10 +134,10 @@ function _tagging_get_suggestions($vid, $node = null) {
 }
 
 /**
- * Implementing #process of the form element tagging_widget.
+ * Implements #process of the form element tagging_widget.
  * Adding Javascript-Libraries needed, if a widget has been placed.
  */
-function _tagging_widget_javascript($form_element = null, &$form_state = array()) {
+function _tagging_widget_javascript($form_element = NULL, &$form_state = array()) {
   return tagging_base::instance()->_tagging_widget_javascript($form_element, $form_state);
 }
 
